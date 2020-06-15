@@ -2,6 +2,29 @@ from django.db import models
 from django.urls import reverse
 import uuid
 
+
+class Author(models.Model):
+    """
+    Model representing an Author.
+    """
+    Fname = models.CharField(max_length=100)
+    Lname = models.CharField(max_length=100)
+    Birth = models.DateField('Birth', null=True, blank=True)
+    Death = models.DateField('Death', null=True, blank=True)
+
+    def get_absolute_url(self):
+        """
+        returns The url to access a particular author instance.
+        """
+        return reverse('author-detail', args=[str(self.id)])
+
+    def __str__(self):
+        """
+        String for representing the Model object.
+        """
+        return '%s, %s' % (self.Fname, self.Lname)
+
+
 class Book(models.Model):
     """
     Model representing a book (but not a specific copy of a book).
@@ -42,6 +65,16 @@ class BookInstance(models.Model):
         ('r', 'Reserved')
     )
     status = models.CharField(max_length=1, choices=Loan_status, blank=True, default='m', help_text='Book Availability')
+
+
+class Meta:
+    ordering = ['due_back']
+
+    def __str__(self):
+        """
+        String for representing the Model object.
+        """
+        return '%s, (%s)' % (self.id, self.book.title)
 
 
 class Genre(models.Model):
